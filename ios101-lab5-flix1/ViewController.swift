@@ -7,29 +7,54 @@ import UIKit
 import Nuke
 
 // TODO: Add table view data source conformance
-class ViewController: UIViewController {
+
+
+
+class ViewController: UIViewController, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return movies.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // Create, configure, and return a table view cell for the given row (i.e., `indexPath.row`)
+
+        // Create the cell
+        let cell = UITableViewCell()
+
+        // Get the movie-associated table view row
+        let movie = movies[indexPath.row]
+
+        // Configure the cell (i.e., update UI elements like labels, image views, etc.)
+        cell.textLabel?.text = movie.title
+
+        // Return the cell for use in the respective table view row
+        return cell
+    }
+    
 
 
     // TODO: Add table view outlet
-
-
+    
+    @IBOutlet weak var tableView: UITableView!
+    
     // TODO: Add property to store fetched movies array
-
+    private var movies: [Movie] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // TODO: Assign table view data source
 
+        tableView.dataSource = self
 
         fetchMovies()
     }
 
     // Fetches a list of popular movies from the TMDB API
     private func fetchMovies() {
-
+        
         // URL for the TMDB Get Popular movies endpoint: https://developers.themoviedb.org/3/movies/get-popular-movies
-        let url = URL(string: "https://api.themoviedb.org/3/movie/popular?api_key=b1446bbf3b4c705c6d35e7c67f59c413&language=en-US&page=1")!
+        let url = URL(string: "https://api.themoviedb.org/3/movie/popular?api_key=21785a0311e3df3cd84232196dd0840b&language=en-US&page=1")!
 
         // ---
         // Create the URL Session to execute a network request given the above url in order to fetch our movie data.
@@ -67,7 +92,7 @@ class ViewController: UIViewController {
 
                 // Run any code that will update UI on the main thread.
                 DispatchQueue.main.async { [weak self] in
-
+                    
                     // We have movies! Do something with them!
                     print("✅ SUCCESS!!! Fetched \(movies.count) movies")
 
@@ -79,8 +104,10 @@ class ViewController: UIViewController {
                     }
 
                     // TODO: Store movies in the `movies` property on the view controller
+                    self?.movies = movies
+                    self?.tableView.reloadData()
 
-
+                    
 
                 }
             } catch {
